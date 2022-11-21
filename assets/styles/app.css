@@ -246,6 +246,7 @@ input:focus {
   from {
     transform: translateY(-5rem);
   }
+
   to {
     transform: translateY(0);
   }
