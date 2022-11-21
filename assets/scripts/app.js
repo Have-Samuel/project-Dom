@@ -9,6 +9,7 @@ const confirmAddMovieButton = addMovieModel.querySelector('.btn--success');
 const userInputs = addMovieModel.querySelectorAll('input');
 // const userInput = addMovieModel.getElementsByTagName('input');
 const entryTextSection = document.getElementById('entry-text');
+const deleteMovieModal = document.getElementById('delete-modal');
 
 // Adding movies
 const movies = [];
@@ -22,7 +23,7 @@ const updateUI = () => {
   }
 };
 
-const deleteMovieHandler = (movieId) => {
+const deleteMovie = (movieId) => {
   let movieIndex = 0;
   for (const movie of movies) {
     if (movie.id === movieId) {
@@ -32,8 +33,19 @@ const deleteMovieHandler = (movieId) => {
   }
   movies.splice(movieIndex, 1);
   const listRoot = document.getElementById('movie-list');
-  // listRoot.children[movieIndex].remove();
-  listRoot.removeChild(listRoot.children[movieIndex]);
+  listRoot.children[movieIndex].remove();
+  // listRoot.removeChild(listRoot.children[movieIndex]);
+};
+
+const closeMovieDeletionModal = () => {
+  toggleBackdrop();
+  deleteMovieModal.classList.remove('visible');
+};
+
+const deleteMovieHandler = (movieId) => {
+  deleteMovieModal.classList.add('visible');
+  toggleBackdrop();
+  // deleteMovie(movieId);
 };
 
 const renderNewMovieElement = (id, title, imageUrl, rating) => {
@@ -57,8 +69,12 @@ const toggleBackdrop = () => {
   backdrop.classList.toggle('visible');
 };
 
-const toggleMovieModal = () => { // function() {}
-  addMovieModel.classList.toggle('visible');
+const closeMovieModal = () => {
+  addMovieModel.classList.remove('visible');
+};
+
+const showMovieModal = () => { // function() {}
+  addMovieModel.classList.add('visible');
   toggleBackdrop();
 };
 
@@ -71,7 +87,7 @@ const clearMovieInput = () => {
 
 // Cancelling Button in the Modal
 const cancelAddMovieHandler = () => {
-  toggleMovieModal();
+  closeMovieModal();
   clearMovieInput();
 };
 
@@ -92,20 +108,24 @@ const addMovieHandler = () => {
     id: Math.random().toString(),
     title: titleValue,
     image: imageUrlValue,
-    rating: ratingValue
+    rating: ratingValue,
   };
+
   movies.push(newMovie);
   console.log(movies);
-  toggleMovieModal(); // to close the model
+  closeMovieModal(); // to close the model
   clearMovieInput();
+  toggleBackdrop();
   renderNewMovieElement(newMovie.id, newMovie.title, newMovie.imageUrl, newMovie.rating);
   updateUI();
-
-  const backdropCLickHandler = () => {
-    toggleBackdrop();
-  };
 };
-startAddMovieButton.addEventListener('click', toggleMovieModal);
-backdrop.addEventListener('click', toggleMovieModal);
+
+const backdropClickHandler = () => {
+  closeMovieModal();
+  closeMovieDeletionModal();
+};
+
+startAddMovieButton.addEventListener('click', showMovieModal);
+backdrop.addEventListener('click', backdropClickHandler);
 cancelAddMovieButton.addEventListener('click', cancelAddMovieHandler);
 confirmAddMovieButton.addEventListener('click', addMovieHandler);
