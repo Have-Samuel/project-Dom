@@ -14,6 +14,10 @@ const deleteMovieModal = document.getElementById('delete-modal');
 // Adding movies
 const movies = [];
 
+const toggleBackdrop = () => {
+  backdrop.classList.toggle('visible');
+};
+
 // Updates the UI when the Array has some movies
 const updateUI = () => {
   if (movies.length === 0) {
@@ -21,6 +25,11 @@ const updateUI = () => {
   } else {
     entryTextSection.style.display = 'none';
   }
+};
+
+const closeMovieDeletionModal = () => {
+  toggleBackdrop();
+  deleteMovieModal.classList.remove('visible');
 };
 
 const deleteMovieHandler = (movieId) => {
@@ -35,18 +44,22 @@ const deleteMovieHandler = (movieId) => {
   const listRoot = document.getElementById('movie-list');
   listRoot.children[movieIndex].remove();
   // listRoot.removeChild(listRoot.children[movieIndex]);
-};
-
-const closeMovieDeletionModal = () => {
-  toggleBackdrop();
-  deleteMovieModal.classList.remove('visible');
+  closeMovieDeletionModal();
+  updateUI();
 };
 
 const startDeleteMovieHandler = (movieId) => {
   deleteMovieModal.classList.add('visible');
   toggleBackdrop();
+
   const cancelDeletionButton = deleteMovieModal.querySelector('.btn--passive');
-  const confirmDeletionButton = deleteMovieModal.querySelector('.btn--danger');
+  let confirmDeletionButton = deleteMovieModal.querySelector('.btn--danger');
+
+  confirmDeletionButton.replaceWith(confirmDeletionButton.cloneNode(true));
+  confirmDeletionButton = deleteMovieModal.querySelector('.btn--danger');
+
+  cancelDeletionButton.removeEventListener('click', closeMovieDeletionModal);
+
   cancelDeletionButton.addEventListener('click', closeMovieDeletionModal);
   confirmDeletionButton.addEventListener('click', deleteMovieHandler.bind(null, movieId));
   // deleteMovie(movieId);
@@ -69,10 +82,6 @@ const renderNewMovieElement = (id, title, imageUrl, rating) => {
   listRoot.appendChild(newMovieElement);
 };
 
-const toggleBackdrop = () => {
-  backdrop.classList.toggle('visible');
-};
-
 const closeMovieModal = () => {
   addMovieModel.classList.remove('visible');
 };
@@ -93,6 +102,7 @@ const clearMovieInput = () => {
 const cancelAddMovieHandler = () => {
   closeMovieModal();
   clearMovieInput();
+  toggleBackdrop();
 };
 
 // Adding Info to the modal
@@ -127,6 +137,7 @@ const addMovieHandler = () => {
 const backdropClickHandler = () => {
   closeMovieModal();
   closeMovieDeletionModal();
+  clearMovieInput();
 };
 
 startAddMovieButton.addEventListener('click', showMovieModal);
